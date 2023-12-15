@@ -11,30 +11,22 @@ public class Log {
     private File log;
 
     public Log(String path) {
-
+        // parse path
         String fileName = path + "log.txt";
         File log = new File(fileName);
-
+        // setters
         this.index = readLog(log);
         this.indexStr = createIndexString(index);
         this.log = log;
-
     }
 
+    // getters
     public String getIndexStr() {
         return indexStr;
     }
     public int getIndex() {
         return index;
     }
-
-
-    public void setIndex(int index) {
-        this.index = index;
-        this.indexStr = createIndexString(index);
-    }
-
-
     public File getLog() {
         return log;
     }
@@ -42,24 +34,18 @@ public class Log {
         this.log = log;
     }
 
-    public void stepLog() {
-        setIndex(index + 1);
-        try(PrintWriter writer = new PrintWriter(new FileOutputStream(log,false))) {
-
-            writer.println(getIndexStr());
-        } catch(FileNotFoundException e) {
-            System.out.println("Something went wrong writing to the log file");
-        }
+    // set index
+    public void setIndex(int index) {
+        this.index = index;
+        this.indexStr = createIndexString(index);
     }
 
+    // todo: this is not very readable
     private int readLog(File file) {
-
         int localIndex = 0;
-
         try {
 
             if(!file.exists()) {
-
                 file.createNewFile();
                 this.log = file;
                 try(PrintWriter writer = new PrintWriter(new FileOutputStream(log,false))) {
@@ -80,16 +66,22 @@ public class Log {
         return localIndex;
     }
 
-    private String createIndexString(int num) {
-        if (num > 99) {
-            return Integer.toString(num);
-        }
-        if (num > 9) {
-            return "0" + num;
-        }
-        else {
-            return "00" + num;
+    // step index in log
+    public void stepLog() {
+        setIndex(index + 1);
+        try(PrintWriter writer = new PrintWriter(new FileOutputStream(log,false))) {
+            writer.println(getIndexStr());
+        } catch(FileNotFoundException e) {
+            System.out.println("Something went wrong writing to the log file");
         }
     }
+
+    // create index string
+    private String createIndexString(int num) {
+        if (num > 99) {return Integer.toString(num);}
+        if (num > 9) {return "0" + num;}
+        else {return "00" + num;}
+    }
+
 
 }

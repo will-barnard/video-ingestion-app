@@ -29,58 +29,62 @@ public class Application extends javafx.application.Application {
     private String pathDisplay = "";
     private String indexDisplay = "";
 
-
+    // launch
+    public static void main(String[] args) {
+        launch();
+    }
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Ingestion Automator");
+        primaryStage.setTitle("Recital Automator");
 
         GridPane grid = new GridPane();
-        grid.setAlignment(Pos.TOP_LEFT);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        // grid settings
+        {
+            grid.setAlignment(Pos.TOP_LEFT);
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(25, 25, 25, 25));
+        }
 
+        // scene
         Scene scene = new Scene(grid, 500, 600);
         primaryStage.setScene(scene);
 
+        // form elements
+        // title
         Text scenetitle = new Text("Super Ingestionator");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 
-
+        // pathing
         Label pathLabel = new Label("Destination Path:");
         TextField destinationPath = new TextField();
         Button update = new Button("Update");
-
         Label currentPathLabel = new Label("Current Path:");
         Text currentPath = new Text(pathDisplay);
-
         Label currentIndexLabel = new Label("Current Index:");
         Text currentIndex = new Text(indexDisplay);
 
+        // CSV info form
         Label studentNameLabel = new Label("Student Name:");
         TextField studentName = new TextField();
-
         Label pieceTitleLabel = new Label("Title of Piece:");
         TextField pieceTitle = new TextField();
-
         Label composerLabel = new Label("Composer:");
         TextField composer = new TextField();
 
         Button execute = new Button("Execute");
 
+        // drag n drop
         Text dropHere = new Text("Drop files here:");
         Rectangle dropzone = new Rectangle(100,100, Paint.valueOf("Lightgray"));
-
         ImageView imageView = new ImageView();
         imageView.setFitHeight(90);
         imageView.setFitWidth(90);
-
         Button clear = new Button("Clear");
         Button printFiles = new Button("Show Filenames");
-
         Text filenames = new Text();
 
-        // grid layouts below
+        // grid layouts
         {
             grid.add(scenetitle, 0, 0, 2, 1);
 
@@ -116,22 +120,31 @@ public class Application extends javafx.application.Application {
         }
         primaryStage.show();
 
-        // button updates the filepath and generates log and data
+
+        // EVENTS BELOW
+
+        // update the filepath, generate log and data if null
         update.setOnAction(actionEvent -> {
+
+            // catch path name laziness
             if (!destinationPath.getText().substring(destinationPath.getText().length() - 1).equals("/")) {
                 this.pathDisplay = destinationPath.getText() + "/";
             } else{
                 this.pathDisplay = destinationPath.getText();
             }
+
+            // update
             initLog(pathDisplay);
             initData(pathDisplay);
             System.out.println("current log path is " + pathDisplay);
             currentPath.setText(pathDisplay);
             currentIndex.setText(log.getIndexStr());
+
         });
 
-        // button to execute file transfer and data write
+        // execute program function, transfer files, and write to log/data
         execute.setOnAction(actionEvent -> {
+
             // write to data file
             data.writeData(log.getIndexStr(), studentName.getText(), pieceTitle.getText(), composer.getText());
             // step index
@@ -146,8 +159,10 @@ public class Application extends javafx.application.Application {
             moveFiles(fileList);
             fileList.clear();
             imageView.setImage(null);
+
         });
 
+        // dropzone file drop events
         dropzone.setOnDragOver(actionEvent -> {
             if (actionEvent.getDragboard().hasFiles()) {
                 actionEvent.acceptTransferModes(TransferMode.ANY);
@@ -165,6 +180,7 @@ public class Application extends javafx.application.Application {
             this.fileList = files;
         });
 
+        // "Clear" and "Show File Names" buttons
         clear.setOnAction(actionEvent -> {
             fileList.clear();
             filenames.setText("");
@@ -176,24 +192,27 @@ public class Application extends javafx.application.Application {
         });
     }
 
-    public static void main(String[] args) {
-        launch();
-    }
 
+
+    // App sub-methods
     private void initLog(String path) {
         Log initLog = new Log(path);
         this.log = initLog;
         this.indexDisplay = log.getIndexStr();
         this.pathDisplay = path;
     }
-
     private void initData(String path) {
         Data initData = new Data(path);
         this.data = initData;
     }
-
+    private String get2DigitSequence(int num) {
+        if (num > 9) {
+            return Integer.toString(num);
+        } else {
+            return "0" + num;
+        }
+    }
     private void moveFiles(List<File> files) {
-
         int step = 1;
         for (File file : files) {
             String stepStr = get2DigitSequence(step);
@@ -205,30 +224,18 @@ public class Application extends javafx.application.Application {
                 System.out.println("Failed to move file");
             }
         }
-
     }
-
-    private String get2DigitSequence(int num) {
-        if (num > 9) {
-            return Integer.toString(num);
-        } else {
-            return "0" + num;
-        }
-    }
-
     private String printFileNames(List<File> files) {
-
         String result = "";
         int step = 0;
         for (File file : files) {
-
             result += file.getName();
             if (step != files.size() - 1) {
                 result += "\n";
             }
-
         }
         return result;
     }
+
 
 }

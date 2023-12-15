@@ -43,7 +43,7 @@ public class Application extends javafx.application.Application {
         Scene scene = new Scene(grid, 500, 600);
         primaryStage.setScene(scene);
 
-        Text scenetitle = new Text("Ingestion Automator");
+        Text scenetitle = new Text("Super Ingestionator");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 
 

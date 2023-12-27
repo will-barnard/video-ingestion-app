@@ -1,5 +1,5 @@
 JAVA APP
-make a field for typing in the month
+// none for now
 
 
 SETUP PRPROJ

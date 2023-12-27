@@ -236,7 +236,7 @@ public class Application extends javafx.application.Application {
             for (File file : files) {
                 String[] fileSplit = file.getName().split("\\.");
                 String stepStr = get2DigitSequence(step);
-                File destFile = new File(pathDisplay + "/video/assembled/" + indexDisplay + "." + stepStr + "." + fileSplit[1]);
+                File destFile = new File(pathDisplay + "/video/submissions/" + indexDisplay + "." + stepStr + "." + fileSplit[1]);
                 step++;
                 if (file.renameTo(destFile)) {
                     System.out.println("File moved successfully");
@@ -246,7 +246,7 @@ public class Application extends javafx.application.Application {
             }
         } else if (fileList.size() == 1) {
             String[] fileSplit = fileList.get(0).getName().split("\\.");
-            File destFile = new File(pathDisplay + "/video/assembled/" + indexDisplay + "\\." + fileSplit[1]);
+            File destFile = new File(pathDisplay + "/video/submissions/" + indexDisplay + "\\." + fileSplit[1]);
             if (fileList.get(0).renameTo(destFile)) {
                 System.out.println("File moved successfully");
             } else {

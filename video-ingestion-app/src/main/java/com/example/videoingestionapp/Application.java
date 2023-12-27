@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Application extends javafx.application.Application {
 
@@ -59,6 +60,11 @@ public class Application extends javafx.application.Application {
         Label pathLabel = new Label("Destination Path:");
         TextField destinationPath = new TextField();
         Button update = new Button("Update");
+        // recital title
+        Label monthTitleLabel = new Label("Recital Title:");
+        TextField monthTitle = new TextField();
+        Button createTitleButton = new Button("Create");
+        // pathing display
         Label currentPathLabel = new Label("Current Path:");
         Text currentPath = new Text(pathDisplay);
         Label currentIndexLabel = new Label("Current Index:");
@@ -71,7 +77,6 @@ public class Application extends javafx.application.Application {
         TextField pieceTitle = new TextField();
         Label composerLabel = new Label("Composer:");
         TextField composer = new TextField();
-
         Button execute = new Button("Execute");
 
         // drag n drop
@@ -91,6 +96,10 @@ public class Application extends javafx.application.Application {
             grid.add(pathLabel, 0, 1);
             grid.add(destinationPath, 1, 1);
             grid.add(update, 3, 1);
+
+            grid.add(monthTitleLabel, 0, 2);
+            grid.add(monthTitle, 1, 2);
+            grid.add(createTitle, 3, 2);
 
             grid.add(currentPathLabel, 0, 3);
             grid.add(currentPath, 1, 3);
@@ -142,15 +151,16 @@ public class Application extends javafx.application.Application {
 
         });
 
+        // create the recital "monthTitle" file
+        createTitleButton.setOnAction(actionEvent -> {
+            createTitle(monthTitle.getText());
+        });
+
         // execute program function, transfer files, and write to log/data
         execute.setOnAction(actionEvent -> {
 
             // write to data file
             data.writeData(log.getIndexStr(), studentName.getText(), pieceTitle.getText(), composer.getText());
-            // step index
-            log.stepLog();
-            indexDisplay = log.getIndexStr();
-            currentIndex.setText(indexDisplay);
             // clear text fields
             studentName.clear();
             pieceTitle.clear();
@@ -159,6 +169,10 @@ public class Application extends javafx.application.Application {
             moveFiles(fileList);
             fileList.clear();
             imageView.setImage(null);
+            // step index
+            log.stepLog();
+            indexDisplay = log.getIndexStr();
+            currentIndex.setText(indexDisplay);
 
         });
 
@@ -196,14 +210,17 @@ public class Application extends javafx.application.Application {
 
     // App sub-methods
     private void initLog(String path) {
+        this.pathDisplay = path;
+        path += "data/";
         Log initLog = new Log(path);
         this.log = initLog;
         this.indexDisplay = log.getIndexStr();
-        this.pathDisplay = path;
     }
     private void initData(String path) {
+        path += "data/";
         Data initData = new Data(path);
         this.data = initData;
+        data.writeData("index", "name", "title", "composer");
     }
     private String get2DigitSequence(int num) {
         if (num > 9) {
@@ -214,16 +231,29 @@ public class Application extends javafx.application.Application {
     }
     private void moveFiles(List<File> files) {
         int step = 1;
-        for (File file : files) {
-            String stepStr = get2DigitSequence(step);
-            File destFile = new File(pathDisplay + indexDisplay + "_" + stepStr + "_" + file.getName());
-            step++;
-            if (file.renameTo(destFile)) {
+
+        if (fileList.size() > 1) {
+            for (File file : files) {
+                String[] fileSplit = file.getName().split("\\.");
+                String stepStr = get2DigitSequence(step);
+                File destFile = new File(pathDisplay + "/video/assembled/" + indexDisplay + "." + stepStr + "." + fileSplit[1]);
+                step++;
+                if (file.renameTo(destFile)) {
+                    System.out.println("File moved successfully");
+                } else {
+                    System.out.println("Failed to move file");
+                }
+            }
+        } else if (fileList.size() == 1) {
+            String[] fileSplit = fileList.get(0).getName().split("\\.");
+            File destFile = new File(pathDisplay + "/video/assembled/" + indexDisplay + "\\." + fileSplit[1]);
+            if (fileList.get(0).renameTo(destFile)) {
                 System.out.println("File moved successfully");
             } else {
                 System.out.println("Failed to move file");
             }
         }
+
     }
     private String printFileNames(List<File> files) {
         String result = "";
@@ -236,6 +266,31 @@ public class Application extends javafx.application.Application {
         }
         return result;
     }
+    private void createTitle(String title) {
 
+        try {
+            if (pathDisplay == null) {
+                throw new Exception("no path");
+            }
+        } catch(Exception e) {
+            System.out.println(e);
+        }
+        File file = new File(pathDisplay + "data/title.txt");
+        try {
+            if(!file.exists()) {
+                file.createNewFile();
+                try(PrintWriter writer = new PrintWriter(new FileOutputStream(file,false))) {
+                    writer.println(title);
+                    System.out.println("succesfully created title file");
+                } catch(FileNotFoundException e) {
+                    System.out.println("Something went wrong writing to the recital title file");
+                }
+            }
+
+        } catch(IOException e) {
+            System.out.println("Something went wrong creating or reading the recital title file");
+        }
+
+    }
 
 }

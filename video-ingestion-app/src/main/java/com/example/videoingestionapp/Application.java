@@ -99,7 +99,7 @@ public class Application extends javafx.application.Application {
 
             grid.add(monthTitleLabel, 0, 2);
             grid.add(monthTitle, 1, 2);
-            grid.add(createTitle, 3, 2);
+            grid.add(createTitleButton, 3, 2);
 
             grid.add(currentPathLabel, 0, 3);
             grid.add(currentPath, 1, 3);
@@ -222,13 +222,34 @@ public class Application extends javafx.application.Application {
         this.data = initData;
         data.writeData("index", "name", "title", "composer");
     }
-    private String get2DigitSequence(int num) {
-        if (num > 9) {
-            return Integer.toString(num);
-        } else {
-            return "0" + num;
+    private void createTitle(String title) {
+
+        try {
+            if (pathDisplay == null) {
+                throw new Exception("no path");
+            }
+        } catch(Exception e) {
+            System.out.println(e);
         }
+        File file = new File(pathDisplay + "data/title.csv");
+        try {
+            if(!file.exists()) {
+                file.createNewFile();
+                try(PrintWriter writer = new PrintWriter(new FileOutputStream(file,true))) {
+                    writer.println("Recital Title");
+                    writer.println(title);
+                    System.out.println("succesfully created title file");
+                } catch(FileNotFoundException e) {
+                    System.out.println("Something went wrong writing to the recital title file");
+                }
+            }
+
+        } catch(IOException e) {
+            System.out.println("Something went wrong creating or reading the recital title file");
+        }
+
     }
+
     private void moveFiles(List<File> files) {
         int step = 1;
 
@@ -236,7 +257,7 @@ public class Application extends javafx.application.Application {
             for (File file : files) {
                 String[] fileSplit = file.getName().split("\\.");
                 String stepStr = get2DigitSequence(step);
-                File destFile = new File(pathDisplay + "/video/submissions/" + indexDisplay + "." + stepStr + "." + fileSplit[1]);
+                File destFile = new File(pathDisplay + "/video/submissions/" + indexDisplay + "_" + stepStr + "." + fileSplit[1]);
                 step++;
                 if (file.renameTo(destFile)) {
                     System.out.println("File moved successfully");
@@ -246,7 +267,7 @@ public class Application extends javafx.application.Application {
             }
         } else if (fileList.size() == 1) {
             String[] fileSplit = fileList.get(0).getName().split("\\.");
-            File destFile = new File(pathDisplay + "/video/submissions/" + indexDisplay + "\\." + fileSplit[1]);
+            File destFile = new File(pathDisplay + "/video/submissions/" + indexDisplay + "." + fileSplit[1]);
             if (fileList.get(0).renameTo(destFile)) {
                 System.out.println("File moved successfully");
             } else {
@@ -266,31 +287,12 @@ public class Application extends javafx.application.Application {
         }
         return result;
     }
-    private void createTitle(String title) {
-
-        try {
-            if (pathDisplay == null) {
-                throw new Exception("no path");
-            }
-        } catch(Exception e) {
-            System.out.println(e);
+    private String get2DigitSequence(int num) {
+        if (num > 9) {
+            return Integer.toString(num);
+        } else {
+            return "0" + num;
         }
-        File file = new File(pathDisplay + "data/title.txt");
-        try {
-            if(!file.exists()) {
-                file.createNewFile();
-                try(PrintWriter writer = new PrintWriter(new FileOutputStream(file,false))) {
-                    writer.println(title);
-                    System.out.println("succesfully created title file");
-                } catch(FileNotFoundException e) {
-                    System.out.println("Something went wrong writing to the recital title file");
-                }
-            }
-
-        } catch(IOException e) {
-            System.out.println("Something went wrong creating or reading the recital title file");
-        }
-
     }
 
 }

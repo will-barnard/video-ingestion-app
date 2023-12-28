@@ -1,17 +1,15 @@
 JAVA APP
-// none for now
+maybe make functionality for if someone submits more content after ingestion?
 
 
-SETUP PRPROJ
-make a "setup" project in premiere. setup file will export 1080p .mov files for import into after effects
+PRPROJ
+setup will export 1080p .mov files for import into after effects
 
 SETUP EXPORTS
 video files as "[i].MOV" to "assembled"
 
-
 AE
-make a template with 200 entries in after effects tied to a generic "data.csv" 
-csv and video files are then automatically ingested when the main proj AE is opened
+csv files are then automatically ingested when the main proj AE is opened
 add transition graphics at the start and end of each sequence
 import recital/month into after effects, have "part 1", "part 2", templated up to maybe 8?
 

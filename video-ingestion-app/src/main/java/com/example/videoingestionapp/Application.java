@@ -220,7 +220,6 @@ public class Application extends javafx.application.Application {
         path += "data/";
         Data initData = new Data(path);
         this.data = initData;
-        data.writeData("index", "name", "title", "composer");
     }
     private void createTitle(String title) {
 

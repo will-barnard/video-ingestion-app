@@ -5,6 +5,7 @@ import java.io.*;
 public class Data {
 
     private File data;
+    private boolean newFile = false;
 
     public Data(String path) {
         // parse path
@@ -13,9 +14,15 @@ public class Data {
         // set
         this.data = data;
         initData(data);
+        if (newFile) {
+            writeData("index", "name", "title", "composer");
+        }
     }
     private void initData(File data) {
-        try {if(!data.exists()) {data.createNewFile();}
+        try {if(!data.exists()) {
+            data.createNewFile();
+            this.newFile = true;
+        }
         } catch(IOException e) {System.out.println("Something went wrong creating or reading the data file");}
     }
 

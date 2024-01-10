@@ -1,5 +1,7 @@
 JAVA APP
 maybe make functionality for if someone submits more content after ingestion?
+fix issue where program rewrites title row upon destination update
+have txt file keep current directory
 
 
 PRPROJ

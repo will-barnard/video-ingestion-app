@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -29,6 +30,7 @@ public class Application extends javafx.application.Application {
     private List<File> fileList = new ArrayList<>();
     private String pathDisplay = "";
     private String indexDisplay = "";
+    private String renamePath = "";
 
     // launch
     public static void main(String[] args) {
@@ -48,7 +50,7 @@ public class Application extends javafx.application.Application {
         }
 
         // scene
-        Scene scene = new Scene(grid, 500, 600);
+        Scene scene = new Scene(grid, 600, 800);
         primaryStage.setScene(scene);
 
         // form elements
@@ -89,6 +91,12 @@ public class Application extends javafx.application.Application {
         Button printFiles = new Button("Show Filenames");
         Text filenames = new Text();
 
+        // name toggle
+        Label renameLabel = new Label("Rename files:");
+        TextField renameDestinationPath = new TextField();
+        Button printRename = new Button("print");
+        Button rename = new Button("rename");
+
         // grid layouts
         {
             grid.add(scenetitle, 0, 0, 2, 1);
@@ -126,6 +134,11 @@ public class Application extends javafx.application.Application {
             grid.add(clear, 1, 16, 1, 1);
 
             grid.add(filenames, 0, 17, 1, 2);
+
+            grid.add(renameLabel, 0, 20);
+            grid.add(renameDestinationPath, 0, 21, 1, 2);
+            grid.add(printRename, 1, 21);
+            grid.add(rename, 0, 23);
         }
         primaryStage.show();
 
@@ -203,6 +216,40 @@ public class Application extends javafx.application.Application {
 
         printFiles.setOnAction(actionEvent -> {
             filenames.setText(printFileNames(fileList));
+        });
+
+        // print files for renaming
+        printRename.setOnAction(actionEvent -> {
+            System.out.println("files for rename: \n" + renameDestinationPath.getText());
+            for (File file : new File(renameDestinationPath.getText()).listFiles()) {
+                System.out.println(file.getName());
+            }
+        });
+
+
+        // rename files
+        rename.setOnAction(actionEvent -> {
+            this.renamePath = renameDestinationPath.getText();
+            if (!renamePath.substring(renamePath.length() - 1).equals("/")) {
+                this.renamePath = renamePath + "/";
+            }
+
+            File renameDir = new File(renamePath);
+
+            System.out.println("renaming");
+
+            for (File file : renameDir.listFiles()) {
+                String[] array = file.getName().split("\\.");
+                if(!array[0].equals("")) {
+                    String ext = file.getName().split("\\.")[1];
+                    File newFile = new File(renameDir + "/" + data.getRow(array[0]).toString() + "." + ext);
+                    if (newFile.exists()) {
+                        System.out.println("File already exists");
+                    } else {
+                        file.renameTo(newFile);
+                    }
+                }
+            }
         });
     }
 

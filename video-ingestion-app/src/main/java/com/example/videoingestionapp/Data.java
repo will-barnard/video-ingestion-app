@@ -41,5 +41,23 @@ public class Data {
         return indexStr + "," + name + "," + title + "," + composer;
     }
 
+    public Submission getRow(String index) {
+        Submission result = null;
+        try (BufferedReader br = new BufferedReader(new FileReader(data))) {
+            String line;
+            boolean stop = false;
+            while ((line = br.readLine()) != null && !stop) {
+                if (line.substring(0, 3).equals(index)) {
+                    String[] lineSplit = line.split(",");
+                    result = new Submission(lineSplit);
+                    stop = true;
+                }
+            }
+        } catch(Exception e) {
+            System.out.println("Something went wrong reading the data file");
+        }
+        return result;
+    }
+
 
 }

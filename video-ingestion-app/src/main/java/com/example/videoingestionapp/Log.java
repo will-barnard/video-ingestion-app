@@ -46,14 +46,19 @@ public class Log {
         try {
 
             if(!file.exists()) {
-                file.createNewFile();
                 this.log = file;
-                try(PrintWriter writer = new PrintWriter(new FileOutputStream(log,false))) {
-                    writer.println("000");
-                    return localIndex;
-                } catch(FileNotFoundException e) {
-                    System.out.println("Something went wrong writing init to the log file");
+                boolean fileCreated = log.createNewFile();
+                if (fileCreated) {
+                    try(PrintWriter writer = new PrintWriter(new FileOutputStream(log,false))) {
+                        writer.println("000");
+                        return localIndex;
+                    } catch(FileNotFoundException e) {
+                        System.out.println("Something went wrong writing init to the log file");
+                    }
+                } else {
+                    System.out.println("unable to create file");
                 }
+
             }
 
             Scanner readIndex = new Scanner(file);

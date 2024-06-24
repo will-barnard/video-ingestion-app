@@ -46,8 +46,9 @@ public class Data {
         try (BufferedReader br = new BufferedReader(new FileReader(data))) {
             String line;
             boolean stop = false;
+            br.readLine();
             while ((line = br.readLine()) != null && !stop) {
-                if (line.substring(0, 3).equals(index)) {
+                if (Integer.parseInt(line.split(",")[0]) == Integer.parseInt(index)) {
                     String[] lineSplit = line.split(",");
                     result = new Submission(lineSplit);
                     stop = true;

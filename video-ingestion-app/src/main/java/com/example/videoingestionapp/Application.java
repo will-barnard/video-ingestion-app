@@ -31,7 +31,6 @@ public class Application extends javafx.application.Application {
     private String pathDisplay = "";
     private String indexDisplay = "";
     private String renamePath = "";
-
     // launch
     public static void main(String[] args) {
         launch();

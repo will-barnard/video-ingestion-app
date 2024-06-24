@@ -22,11 +22,11 @@ public class Submission {
         this.index = array[0];
         this.name = array[1];
         this.title = array[2];
-        this.composer = array[3];
+//        this.composer = array[3];
     }
 
     public String toString() {
-        return index + " " + name + " " + title + " " + composer;
+        return  name + " " + title + " " + "June 2024";
     }
 
 }

@@ -4,7 +4,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class Application extends javafx.application.Application {
 
     private Log log;
@@ -37,7 +37,7 @@ public class Application extends javafx.application.Application {
     }
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Recital Automator");
+        primaryStage.setTitle("Super Ingestionator");
 
         GridPane grid = new GridPane();
         // grid settings
@@ -54,17 +54,14 @@ public class Application extends javafx.application.Application {
 
         // form elements
         // title
-        Text scenetitle = new Text("Super Ingestionator");
+        Text scenetitle = new Text("Directory");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 
         // pathing
+        Button loadStoredPath = new Button("Load stored path");
         Label pathLabel = new Label("Destination Path:");
         TextField destinationPath = new TextField();
         Button update = new Button("Update");
-        // recital title
-        Label monthTitleLabel = new Label("Recital Title:");
-        TextField monthTitle = new TextField();
-        Button createTitleButton = new Button("Create");
         // pathing display
         Label currentPathLabel = new Label("Current Path:");
         Text currentPath = new Text(pathDisplay);
@@ -72,13 +69,15 @@ public class Application extends javafx.application.Application {
         Text currentIndex = new Text(indexDisplay);
 
         // CSV info form
+        Text dataTitle = new Text("Submission form");
+        dataTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         Label studentNameLabel = new Label("Student Name:");
         TextField studentName = new TextField();
         Label pieceTitleLabel = new Label("Title of Piece:");
         TextField pieceTitle = new TextField();
         Label composerLabel = new Label("Composer:");
         TextField composer = new TextField();
-        Button execute = new Button("Execute");
+        Button execute = new Button("Log submission");
 
         // drag n drop
         Text dropHere = new Text("Drop files here:");
@@ -90,11 +89,16 @@ public class Application extends javafx.application.Application {
         Button printFiles = new Button("Show Filenames");
         Text filenames = new Text();
 
+        // UTILITY
+        Text utilityTitle = new Text("Utility");
+        utilityTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         // name toggle
-        Label renameLabel = new Label("Rename files:");
         TextField renameDestinationPath = new TextField();
-        Button printRename = new Button("print");
-        Button rename = new Button("rename");
+        Button printRename = new Button("Print file names");
+        Button rename = new Button("Rename submissions");
+        // recital title
+        TextField monthTitle = new TextField();
+        Button createTitleButton = new Button("Create recital title");
 
         // grid layouts
         {
@@ -102,42 +106,47 @@ public class Application extends javafx.application.Application {
 
             grid.add(pathLabel, 0, 1);
             grid.add(destinationPath, 1, 1);
-            grid.add(update, 3, 1);
+            grid.add(update, 2, 1);
 
-            grid.add(monthTitleLabel, 0, 2);
-            grid.add(monthTitle, 1, 2);
-            grid.add(createTitleButton, 3, 2);
+            grid.add(currentPathLabel, 0, 2);
+            grid.add(currentPath, 1, 2);
 
-            grid.add(currentPathLabel, 0, 3);
-            grid.add(currentPath, 1, 3);
+            grid.add(currentIndexLabel, 0, 3);
+            grid.add(currentIndex, 1, 3);
 
-            grid.add(currentIndexLabel, 0, 4);
-            grid.add(currentIndex, 1, 4);
+            grid.add(loadStoredPath, 0, 4);
 
-            grid.add(studentNameLabel, 0, 6);
-            grid.add(studentName, 1, 6);
+            grid.add(dataTitle, 0, 6);
 
-            grid.add(pieceTitleLabel, 0, 7);
-            grid.add(pieceTitle, 1, 7);
+            grid.add(studentNameLabel, 0, 7);
+            grid.add(studentName, 1, 7);
 
-            grid.add(composerLabel, 0, 8);
-            grid.add(composer, 1, 8);
+            grid.add(pieceTitleLabel, 0, 8);
+            grid.add(pieceTitle, 1, 8);
 
-            grid.add(execute, 0, 9, 1, 2);
+            grid.add(composerLabel, 0, 9);
+            grid.add(composer, 1, 9);
 
-            grid.add(dropHere, 0, 13);
-            grid.add(dropzone, 0, 14, 2, 2);
-            grid.add(imageView, 0, 14, 2, 2);
+            grid.add(execute, 0, 10, 1, 2);
 
-            grid.add(printFiles, 0, 16, 1, 1);
-            grid.add(clear, 1, 16, 1, 1);
+            grid.add(dropHere, 0, 14);
+            grid.add(dropzone, 0, 15, 2, 2);
+            grid.add(imageView, 0, 15, 2, 2);
 
-            grid.add(filenames, 0, 17, 1, 2);
+            grid.add(printFiles, 0, 17, 1, 1);
+            grid.add(clear, 1, 17, 1, 1);
 
-            grid.add(renameLabel, 0, 20);
-            grid.add(renameDestinationPath, 0, 21, 1, 2);
-            grid.add(printRename, 1, 21);
-            grid.add(rename, 0, 23);
+            grid.add(filenames, 0, 18, 1, 2);
+
+            grid.add(utilityTitle, 0, 22);
+
+            grid.add(renameDestinationPath, 0, 23, 1, 1);
+            grid.add(printRename, 2, 23);
+            grid.add(rename, 1, 23);
+
+
+            grid.add(monthTitle, 0, 26);
+            grid.add(createTitleButton, 1, 26);
         }
         primaryStage.show();
 
@@ -147,26 +156,28 @@ public class Application extends javafx.application.Application {
         // update the filepath, generate log and data if null
         update.setOnAction(actionEvent -> {
 
-            // catch path name laziness
-            if (!destinationPath.getText().substring(destinationPath.getText().length() - 1).equals("/")) {
-                this.pathDisplay = destinationPath.getText() + "/";
-            } else{
-                this.pathDisplay = destinationPath.getText();
-            }
 
-            // update
-            initLog(pathDisplay);
-            initData(pathDisplay);
-            System.out.println("current log path is " + pathDisplay);
+
+            // catch path name laziness
+            loadDirectory(destinationPath.getText());
             currentPath.setText(pathDisplay);
             currentIndex.setText(log.getIndexStr());
 
+        });
+
+        // load stored directory
+        loadStoredPath.setOnAction(actionEvent -> {
+            loadDirectory(getStoredDirectory());
+            currentPath.setText(pathDisplay);
+            currentIndex.setText(log.getIndexStr());
         });
 
         // create the recital "monthTitle" file
         createTitleButton.setOnAction(actionEvent -> {
             createTitle(monthTitle.getText());
         });
+
+
 
         // execute program function, transfer files, and write to log/data
         execute.setOnAction(actionEvent -> {
@@ -338,6 +349,35 @@ public class Application extends javafx.application.Application {
         } else {
             return "0" + num;
         }
+    }
+
+    private String getStoredDirectory() {
+        String dir = "";
+        File file = new File("src/main/resources/directory-path.txt");
+
+        try {
+            Scanner scanner = new Scanner(file);
+            dir = scanner.nextLine();
+        } catch(FileNotFoundException e) {
+            System.out.println("dir file not found");
+        }
+
+
+        return dir;
+    }
+
+    private void loadDirectory(String path) {
+        // catch path name laziness
+        if (!path.substring(path.length() - 1).equals("/")) {
+            this.pathDisplay = path + "/";
+        } else{
+            this.pathDisplay = path;
+        }
+
+        // load state
+        initLog(pathDisplay);
+        initData(pathDisplay);
+        System.out.println("current log path is " + pathDisplay);
     }
 
 }
